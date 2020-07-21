@@ -1,0 +1,6 @@
+.idea
+.idea/*
+.terraform
+.terraform/*
+node_modules/
+node_modules/*
