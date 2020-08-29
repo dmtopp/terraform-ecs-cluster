@@ -10,6 +10,10 @@ data template_file task_definition {
   }
 }
 
+data aws_iam_role ecs_task_execution_role {
+  name = "ecsTaskExecutionRole"
+}
+
 resource aws_ecs_task_definition service_task_definition {
   family = "service"
   container_definitions = data.template_file.task_definition.rendered
@@ -17,7 +21,7 @@ resource aws_ecs_task_definition service_task_definition {
   cpu = "256"
   memory = "512"
   network_mode = "awsvpc"
-//  execution_role_arn = "" TODO
+  execution_role_arn = data.aws_iam_role.ecs_task_execution_role.arn
 }
 
 resource aws_ecs_service service {
@@ -26,4 +30,9 @@ resource aws_ecs_service service {
   task_definition = aws_ecs_task_definition.service_task_definition.arn
   desired_count   = 1
   launch_type = "FARGATE"
+
+  network_configuration {
+    subnets = ["subnet-35a9cf1b"]
+    assign_public_ip = true
+  }
 }
